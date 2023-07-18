@@ -40,7 +40,7 @@ export const parsePageContent: any = (content: any) => {
           props: heading_3.rich_text[0].annotations,
         };
       case "paragraph":
-        if (paragraph.rich_text.length == 0) {
+        if (paragraph.rich_text.length === 0) {
           return {
             type: "empty_line",
           };
@@ -201,18 +201,6 @@ export const parsePageContent: any = (content: any) => {
         }
       }
     }
-
-    // if (block.type === "table" && !block.seen) {
-    //   for (let j = i + 1; j < parsedContent.length; j++) {
-    //     const nextBlock = parsedContent[j];
-    //     if (nextBlock.type === "table_row" && !nextBlock.seen) {
-    //       block.rows.push(nextBlock.cells);
-    //       nextBlock.seen = true;
-    //     } else {
-    //       break;
-    //     }
-    //   }
-    // }
   }
   return parsedContent;
 };

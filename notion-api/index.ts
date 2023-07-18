@@ -52,6 +52,11 @@ export class NotionApi {
     const parsedContent = parsePageContent(response.results);
 
     for (let i = 0; i < parsedContent.length; i++) {
+      if (parsedContent[i].type === "code") {
+        const code = parsedContent[i].text;
+        parsedContent[i].text = code.replace(/\t/g, " ").replace(/\\n/g, "\n");
+      }
+
       if (parsedContent[i].type === "toggle" && parsedContent[i].has_children) {
         const id = parsedContent[i].id;
         const children = await this.notion.blocks.children.list({

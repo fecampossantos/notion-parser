@@ -85,7 +85,7 @@ export const getComponent = (block: any) => {
       return (
         <div>
           <div className="code_language">{block.language}</div>
-          <div className="code_content">
+          <div className="code_content" style={{ whiteSpace: "pre" }}>
             <button
               className="code_copy_button"
               onClick={() => {
