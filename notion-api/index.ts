@@ -44,6 +44,14 @@ export class NotionApi {
     );
   }
 
+  private async getParsedChildren(blockId: string) {
+    const children = await this.notion.blocks.children.list({
+      block_id: blockId,
+      page_size: 50,
+    });
+    return parsePageContent(children.results);
+  }
+
   async getPageContent(pageId: string) {
     const response = await this.notion.blocks.children.list({
       block_id: pageId,
@@ -57,31 +65,8 @@ export class NotionApi {
         parsedContent[i].text = code.replace(/\t/g, " ").replace(/\\n/g, "\n");
       }
 
-      if (parsedContent[i].type === "toggle" && parsedContent[i].has_children) {
-        const id = parsedContent[i].id;
-        const children = await this.notion.blocks.children.list({
-          block_id: id,
-          page_size: 50,
-        });
-        const parsedChildren = parsePageContent(children.results);
-        parsedContent[i].children = parsedChildren;
-      }
-
-      if (parsedContent[i].type === "table" && parsedContent[i].has_children) {
-        const id = parsedContent[i].id;
-        const children = await this.notion.blocks.children.list({
-          block_id: id,
-          page_size: 50,
-        });
-        const tableRows: any = children.results;
-        tableRows.cells = [];
-        const parsedRows = tableRows.map((row: any) => {
-          const rowContent = row.table_row.cells;
-          const rowCells = rowContent.map((cell: any) => cell[0].plain_text);
-
-          return rowCells;
-        });
-        parsedContent[i].rows = parsedRows;
+      if ((parsedContent[i].type === "toggle" || parsedContent[i].type === "table") && parsedContent[i].has_children) {
+        parsedContent[i].children = await this.getParsedChildren(parsedContent[i].id);
       }
     }
     return parsedContent;
